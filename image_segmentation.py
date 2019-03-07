@@ -1,8 +1,12 @@
 # image_segmentation.py
-"""Volume 1: Image Segmentation.
-<Name>
-<Class>
-<Date>
+"""Image Segmentation
+Jake Callahan
+
+Graph theory has a variety of applications. A graph (or network) can be
+represented in many ways on a computer. In this program, I implement a common
+matrix representation for graphs and show how certain properties of the matrix
+representation correspond to inherent properties of the original graph. I also
+show an application of using graphs and linear algebra to segment images.
 """
 
 import numpy as np
@@ -12,8 +16,6 @@ from matplotlib import pyplot as plt
 from scipy import sparse
 from scipy.sparse import linalg
 
-
-# Problem 1
 def laplacian(A):
     """Compute the Laplacian matrix of the graph G that has adjacency matrix A.
 
@@ -32,8 +34,6 @@ def laplacian(A):
 
     return D - A
 
-
-# Problem 2
 def connectivity(A, tol=1e-8):
     """Compute the number of connected components in the graph G and its
     algebraic connectivity, given the adjacency matrix A of G.
@@ -57,7 +57,6 @@ def connectivity(A, tol=1e-8):
             count += 1
     return count
 
-# Helper function for problem 4.
 def get_neighbors(index, radius, height, width):
     """Calculate the flattened indices of the pixels that are within the given
     distance of a central pixel, and their distances from the central pixel.
@@ -89,12 +88,9 @@ def get_neighbors(index, radius, height, width):
     mask = R < radius
     return (X[mask] + Y[mask]*width).astype(np.int), R[mask]
 
-
-# Problems 3-6
 class ImageSegmenter:
     """Class for storing and segmenting images."""
 
-    # Problem 3
     def __init__(self, filename):
         """Read the image file. Store its brightness values as a flat array."""
         #Read image and scale for matplotlib
@@ -117,7 +113,6 @@ class ImageSegmenter:
         if self.flat_brightness.size != self.M*self.N:
             raise ValueError("Flat brightness incorrect shape!")
 
-    # Problem 3
     def show_original(self):
         """Display the original image."""
         if self.color == True:
@@ -128,7 +123,6 @@ class ImageSegmenter:
         plt.axis("off")
         plt.show()
 
-    # Problem 4
     def adjacency(self, r=5., sigma_B2=.02, sigma_X2=3.):
         """Compute the Adjacency and Degree matrices for the image graph."""
         A = sparse.lil_matrix((self.M*self.N, self.M*self.N))
@@ -140,8 +134,6 @@ class ImageSegmenter:
         D = np.array(A.sum(axis = 0))[0]
         return A.tocsc(), D
 
-
-    # Problem 5
     def cut(self, A, D):
         """Compute the boolean mask that segments the image."""
         lap = sparse.csgraph.laplacian(A)
@@ -153,8 +145,6 @@ class ImageSegmenter:
         mask = X > 0
         return mask
 
-
-    # Problem 6
     def segment(self, r=5., sigma_B=.02, sigma_X=3.):
         """Display the original image and its segments."""
         A, D = self.adjacency(r, sigma_B, sigma_X)
@@ -185,10 +175,3 @@ class ImageSegmenter:
             ax3.imshow(neg_image)
             plt.axis("off")
         plt.show()
-
-
-#if __name__ == '__main__':
-    #ImageSegmenter("dream_gray.png").segment()
-    #ImageSegmenter("dream.png").segment()
-    #ImageSegmenter("monument_gray.png").segment()
-    #ImageSegmenter("monument.png").segment()
